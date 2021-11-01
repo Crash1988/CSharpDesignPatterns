@@ -5,18 +5,16 @@
         public readonly IEnumerable<IRule?> _Rules;
         public EndorsementRulesEngine()
         {
-            var ruleType = typeof(IRule);
             _Rules = GetType().Assembly.GetTypes()
-                .Where(p => ruleType.IsAssignableFrom(p) && !p.IsInterface)
+                .Where(p => typeof(IRule).IsAssignableFrom(p) && !p.IsInterface)
                 .Select(r => Activator.CreateInstance(r) as IRule) ?? Enumerable.Empty<IRule?>();
         }
 
-        public void ExecuteAllRules(InputModel i, List<Endorsement> e)
-        {
-
-            _Rules.Where(x => x != null)
+        public void ExecuteAllExecutablesRules(InputModel i, List<Endorsement> e) =>
+            _Rules.Where(r => r != null && r.CanExecute(i))
+                .OrderBy(r => r!.Priority)
                 .ToList()
-                .ForEach(x => x!.Execute(i, e));
-        }
+                .ForEach(r => r!.Execute(i, e));
+
     }
 }

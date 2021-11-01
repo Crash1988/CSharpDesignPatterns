@@ -9,8 +9,7 @@ namespace RulesEngine.RulesEngine
     interface IRule
     {
         public int Priority { get; }
-        public PolicyNumber PolicyNumberRule {  get; }
         bool CanExecute(InputModel input);
-        void Execute(InputModel input, List<Endorsement> endorsements);
+        void Execute( List<Endorsement> endorsements);
     }
 }
